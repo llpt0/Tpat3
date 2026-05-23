@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>TPAT3 Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#04050f;--card:#0b0d22;--panel:#10133a;
+  --blue:#3b82f6;--purple:#7c3aed;--violet:#a855f7;--cyan:#22d3ee;
+  --green:#22c55e;--red:#ef4444;
+  --text:#e2e8f0;--dim:#94a3b8;--border:rgba(120,100,255,.22);
+  --r:14px;--t:.3s cubic-bezier(.4,0,.2,1)
+}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;position:relative}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,130,246,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.05) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;top:-15%;left:-15%;width:60%;height:60%;background:radial-gradient(circle,rgba(124,58,237,.16) 0%,transparent 65%);pointer-events:none;z-index:0;animation:orb 9s ease-in-out infinite alternate}
+@keyframes orb{from{transform:translate(0,0)}to{transform:translate(8%,6%)}}
+
+#root{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:40px 16px}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px 44px;box-shadow:0 0 40px rgba(59,130,246,.08),0 24px 64px rgba(0,0,0,.6);position:relative;overflow:hidden;width:100%;max-width:720px}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--purple),var(--blue),var(--cyan),transparent);opacity:.8}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.screen{animation:fadeUp .45s ease forwards}
+
+.logo{font-family:'Orbitron',monospace;font-size:clamp(2rem,7vw,3.5rem);font-weight:900;background:linear-gradient(135deg,var(--cyan) 0%,var(--blue) 40%,var(--violet) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 18px rgba(59,130,246,.5));line-height:1.1;text-align:center}
+.logo-sub{font-size:.9rem;color:var(--dim);letter-spacing:.25em;text-transform:uppercase;text-align:center;margin-top:8px}
+.divider{width:110px;height:1px;background:linear-gradient(90deg,transparent,var(--purple),transparent);margin:26px auto}
+.desc{text-align:center;color:var(--dim);font-size:1rem;line-height:1.85;margin-bottom:36px}
+.stats{display:flex;justify-content:center;gap:36px;margin-bottom:40px;flex-wrap:wrap}
+.stat-v{font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:700;color:var(--cyan);text-align:center}
+.stat-l{font-size:.75rem;color:var(--dim);text-transform:uppercase;letter-spacing:.15em;text-align:center;margin-top:4px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Sarabun',sans-serif;font-size:1rem;font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:var(--t);padding:13px 32px;width:100%}
+.btn-primary{background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;box-shadow:0 4px 24px rgba(124,58,237,.42);position:relative;overflow:hidden}
+.btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--blue),var(--cyan));opacity:0;transition:opacity .3s}
+.btn-primary:hover::after{opacity:1}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(59,130,246,.5)}
+.btn-primary span{position:relative;z-index:1}
+.btn-next{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04050f;font-weight:800;box-shadow:0 4px 20px rgba(34,211,238,.28)}
+.btn-next:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(34,211,238,.45)}
+.btn-next:disabled{opacity:.35;pointer-events:none}
+.btn-restart{background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;box-shadow:0 4px 24px rgba(124,58,237,.4);position:relative;overflow:hidden}
+.btn-restart::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--blue),var(--cyan));opacity:0;transition:opacity .3s;border-radius:12px}
+.btn-restart:hover::after{opacity:1}
+.btn-restart:hover{transform:translateY(-2px)}
+.btn-restart span{position:relative;z-index:1}
+
+.prog-header{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.prog-label{font-family:'Orbitron',monospace;font-size:.8rem;color:var(--cyan);white-space:nowrap;letter-spacing:.1em}
+.prog-bar{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:100px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:100px;transition:width .55s cubic-bezier(.4,0,.2,1);box-shadow:0 0 10px rgba(34,211,238,.5)}
+.score-badge{font-family:'Orbitron',monospace;font-size:.8rem;color:var(--violet);white-space:nowrap}
+.cat-tag{display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.28);border-radius:100px;padding:4px 14px;margin-bottom:18px}
+.q-text{font-size:clamp(.95rem,2.3vw,1.1rem);font-weight:600;line-height:1.9;color:var(--text);margin-bottom:28px;white-space:pre-line}
+
+@keyframes slideIn{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:translateX(0)}}
+.q-enter{animation:slideIn .38s cubic-bezier(.4,0,.2,1) forwards}
+
+.opts{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.opt{display:flex;align-items:flex-start;gap:12px;width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:var(--r);padding:12px 16px;color:var(--text);font-family:'Sarabun',sans-serif;font-size:.97rem;line-height:1.6;cursor:pointer;text-align:left;transition:var(--t);position:relative;overflow:hidden}
+.opt::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(124,58,237,.13),transparent);opacity:0;transition:opacity .3s}
+.opt:hover:not(:disabled){border-color:var(--purple);background:rgba(124,58,237,.1);transform:translateX(4px)}
+.opt:hover:not(:disabled)::before{opacity:1}
+.opt:disabled{cursor:not-allowed}
+.opt-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;min-width:26px;border-radius:7px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700;color:var(--dim);transition:var(--t)}
+.opt-txt{flex:1;padding-top:2px}
+
+@keyframes pulseG{0%{box-shadow:0 0 0 rgba(34,197,94,0)}50%{box-shadow:0 0 26px rgba(34,197,94,.5)}100%{box-shadow:0 0 16px rgba(34,197,94,.22)}}
+@keyframes shakeX{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.opt.correct{background:rgba(34,197,94,.14);border-color:var(--green);animation:pulseG .4s ease}
+.opt.correct .opt-num{background:var(--green);border-color:var(--green);color:#fff}
+.opt.wrong{background:rgba(239,68,68,.14);border-color:var(--red);animation:shakeX .38s ease}
+.opt.wrong .opt-num{background:var(--red);border-color:var(--red);color:#fff}
+
+@keyframes popIn{from{opacity:0;transform:scale(.84)}to{opacity:1;transform:scale(1)}}
+.result-ind{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;font-weight:700;font-size:.97rem;margin-bottom:18px;animation:popIn .33s cubic-bezier(.175,.885,.32,1.275)}
+.result-ind.ok{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.28)}
+.result-ind.no{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.28)}
+
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.expl{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.27);border-radius:var(--r);padding:16px 20px;margin-bottom:22px;font-size:.92rem;line-height:1.85;color:#c7d9f5;animation:slideDown .33s ease forwards;white-space:pre-line}
+.expl-title{font-family:'Orbitron',monospace;font-size:.66rem;letter-spacing:.15em;color:var(--cyan);text-transform:uppercase;margin-bottom:7px}
+
+.res-header{text-align:center;margin-bottom:30px}
+.res-icon{font-size:3.2rem;display:block;margin-bottom:10px;animation:bounceIn .6s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes bounceIn{0%{transform:scale(0);opacity:0}70%{transform:scale(1.18);opacity:1}100%{transform:scale(1)}}
+.res-title{font-family:'Orbitron',monospace;font-size:clamp(1.3rem,4vw,1.9rem);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.res-sub{color:var(--dim);font-size:.97rem}
+
+.score-wrap{display:flex;justify-content:center;margin:28px 0}
+.score-circle{position:relative;width:150px;height:150px}
+.score-circle svg{transform:rotate(-90deg)}
+.sc-bg{fill:none;stroke:rgba(255,255,255,.06);stroke-width:10}
+.sc-fill{fill:none;stroke-width:10;stroke-linecap:round;stroke:url(#sg);stroke-dasharray:408;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1) .3s}
+.score-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-num{font-family:'Orbitron',monospace;font-size:2.2rem;font-weight:900;color:var(--text);line-height:1}
+.score-pct{font-size:.78rem;color:var(--dim);margin-top:4px}
+
+.congrats{text-align:center;padding:16px 22px;border-radius:var(--r);font-size:.97rem;font-weight:600;line-height:1.65;margin-bottom:24px}
+.congrats.pass{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.28);color:#86efac}
+.congrats.fail{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.28);color:#fca5a5}
+
+.review{display:flex;flex-direction:column;gap:7px;margin-bottom:28px}
+.rev-item{display:flex;align-items:center;gap:9px;font-size:.87rem;padding:9px 13px;border-radius:9px;background:rgba(255,255,255,.03)}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.rev-item.ok{color:#a7f3d0}.rev-item.ok .dot{background:var(--green)}
+.rev-item.no{color:#fca5a5}.rev-item.no .dot{background:var(--red)}
+
+@media(max-width:580px){.card{padding:24px 18px}.stats{gap:20px}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const questions=[
+  {
+    cat:'ด้านตัวเลข (Numerical Reasoning)',
+    q:'โรงงานผลิตชิ้นส่วนรถยนต์แห่งหนึ่ง ตรวจพบชิ้นส่วนที่ไม่ได้มาตรฐาน (Defect) คิดเป็น 2% ของยอดผลิตทั้งหมด หากในวันแรกโรงงานผลิตชิ้นส่วนได้ 5,000 ชิ้น และในวันที่สองโรงงานปรับปรุงเครื่องจักรทำให้ชิ้นส่วนไม่ได้มาตรฐานลดลงเหลือ 1% ของยอดผลิตในวันนั้น ถ้ายอดผลิตวันที่สองเท่ากับ 6,000 ชิ้น จำนวนชิ้นส่วนที่ได้มาตรฐานในวันที่สอง มากกว่าวันแรกกี่ชิ้น?',
+    opts:['940 ชิ้น','1,000 ชิ้น','1,040 ชิ้น','1,060 ชิ้น','1,100 ชิ้น'],
+    ans:3,
+    expl:'วันแรก: ผลิต 5,000 ชิ้น ไม่ได้มาตรฐาน 2% = 100 ชิ้น → ได้มาตรฐาน = 4,900 ชิ้น\nวันที่สอง: ผลิต 6,000 ชิ้น ไม่ได้มาตรฐาน 1% = 60 ชิ้น → ได้มาตรฐาน = 5,940 ชิ้น\nต่างกัน: 5,940 − 4,900 = 1,040 ชิ้น ✓'
+  },
+  {
+    cat:'ด้านมิติสัมพันธ์ (Diagrammatic Reasoning)',
+    q:'มีลูกเต๋ามาตรฐานลูกหนึ่ง (ผลรวมของแต้มบนหน้าตรงข้ามกันเท่ากับ 7 เสมอ: 1↔6, 2↔5, 3↔4) วางอยู่บนพื้นโดยมีแต้ม 3 อยู่ด้านบน และแต้ม 1 อยู่ด้านหน้า\nหากกลิ้งลูกเต๋าไปข้างหน้า 1 ครั้ง แล้วกลิ้งไปทางขวาอีก 1 ครั้ง แต้มบนหน้าด้านบนสุดจะเป็นแต้มอะไร?',
+    opts:['แต้ม 1','แต้ม 2','แต้ม 4','แต้ม 5','แต้ม 6'],
+    ans:4,
+    expl:'เริ่มต้น: บน=3 (ล่าง=4), หน้า=1 (หลัง=6)\nกลิ้งไปข้างหน้า 1 ครั้ง: ด้านบน (3) พลิกมาหน้า, ด้านหลัง (6) พลิกขึ้นบน → บน=6, หน้า=3\nกลิ้งไปทางขวา 1 ครั้ง: ด้านซ้ายของลูกเต๋าจากสถานะเริ่มต้น = แต้ม 5 เมื่อพลิกขวา ด้านซ้าย (5) จึงพลิกขึ้นบน → บน = 5 ✓'
+  },
+  {
+    cat:'ด้านเชิงกล (Mechanical Reasoning) & ฟิสิกส์',
+    q:'ระบบไฮดรอลิกคู่หนึ่งใช้ในการยกวัตถุ โดยกระบอกสูบฝั่งป้อนแรงมีพื้นที่หน้าตัด A₁ = 0.02 m² และกระบอกสูบฝั่งยกวัตถุมีพื้นที่หน้าตัด A₂ = 0.50 m² หากต้องการยกเครื่องจักรหนัก 10,000 N ด้วยความเร็วคงที่ วิศวกรต้องออกแรงกด (F₁) ขั้นต่ำกี่นิวตัน?',
+    opts:['200 N','400 N','500 N','2,000 N','4,000 N'],
+    ans:2,
+    expl:'ใช้กฎของปาสคาล: P₁ = P₂  →  F₁/A₁ = F₂/A₂\nF₁ = F₂ × A₁/A₂ = 10,000 × (0.02/0.50)\nF₁ = 10,000 × 0.04 = 400 N ✓'
+  },
+  {
+    cat:'ความรู้วิศวกรรมศาสตร์ & ฟิสิกส์ประยุกต์',
+    q:'ในการออกแบบระบบเบรกของรถยนต์ วิศวกรเลือกใช้ระบบไฮดรอลิก (Hydraulic System) ในการส่งกำลังจากแป้นเบรกไปยังผ้าเบรก โดยอาศัยหลักการทางฟิสิกส์ประยุกต์ในข้อใดเป็นหลัก?',
+    opts:["กฎของบอยล์ (Boyle's Law)","กฎของปาสคาล (Pascal's Law)","หลักของอาร์คิมีดีส (Archimedes' Principle)","สมการของแบร์นูลลี (Bernoulli's Equation)","กฎความหนืดของนิวตัน (Newton's Law of Viscosity)"],
+    ans:2,
+    expl:"ระบบไฮดรอลิกทำงานโดยอาศัย กฎของปาสคาล (Pascal's Law) ซึ่งกล่าวว่า ถ้าเพิ่มแรงดันให้กับของไหลในภาชนะปิด ณ จุดใดๆ ความดันนั้นจะส่งกระจายไปทุกส่วนด้วยค่าเท่ากัน ทำให้สามารถผ่อนแรงและส่งกำลังในระบบเบรกได้อย่างมีประสิทธิภาพ ✓"
+  },
+  {
+    cat:'จรรยาบรรณวิศวกรรม & เทคโนโลยี',
+    q:'ในการพัฒนาเทคโนโลยีการบินสมัยใหม่ มีการนำเชื้อเพลิงไฮโดรเจน (Hydrogen Fuel) มาใช้เพื่อมุ่งสู่ Net Zero แต่ในแง่วิศวกรรมความปลอดภัย ข้อใดคือข้อจำกัดและสมบัติทางกายภาพของไฮโดรเจนที่วิศวกรต้องระมัดระวังมากที่สุดในการออกแบบถังกักเก็บ?',
+    opts:['มีความหนาแน่นสูงมากจนทำให้เครื่องบินหนักเกินไป','เกิดปฏิกิริยาฟิชชัน (Fission) ได้เองเมื่ออุณหภูมิสูง','มีขนาดโมเลกุลเล็กมากทำให้รั่วซึมง่ายและจุดติดไฟได้ง่ายในอุณหภูมิปกติ','ทำปฏิกิริยากับก๊าซไนโตรเจนในอากาศแล้วกลายเป็นกรดรุนแรง','มีสถานะเป็นของแข็งที่อุณหภูมิห้องทำให้ท่อส่งอุดตัน'],
+    ans:3,
+    expl:'H₂ เป็นโมเลกุลที่เล็กที่สุดในจักรวาล รั่วซึมผ่านรอยต่อและโครงสร้างวัสดุได้ง่ายกว่าก๊าซชนิดอื่น นอกจากนี้ยังมีพลังงานจุดติดไฟต่ำมาก (ติดไฟง่าย) และมีขอบเขตการระเบิดในอากาศที่กว้างมาก วิศวกรจึงต้องให้ความสำคัญกับระบบซีล ปิดผนึก และการทนทานต่อแรงดันสูง ✓'
+  }
+];
+
+let state={screen:'home',qi:0,score:0,answered:false,userAns:[]};
+
+function playSound(ok){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    if(ok){o.frequency.setValueAtTime(520,ctx.currentTime);o.frequency.setValueAtTime(660,ctx.currentTime+.08)}
+    else{o.frequency.setValueAtTime(260,ctx.currentTime);o.frequency.setValueAtTime(200,ctx.currentTime+.1)}
+    g.gain.setValueAtTime(.15,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.28);
+    o.start();o.stop(ctx.currentTime+.28);
+  }catch(e){}
+}
+
+function render(){
+  const root=document.getElementById('root');
+  if(state.screen==='home') root.innerHTML=renderHome();
+  else if(state.screen==='quiz') root.innerHTML=renderQuiz();
+  else root.innerHTML=renderResult();
+}
+
+function renderHome(){
+  return `<div class="card screen">
+    <div class="logo">TPAT3 Quiz</div>
+    <div class="logo-sub">Engineering &amp; Technology</div>
+    <div class="divider"></div>
+    <p class="desc">ทดสอบความรู้และทักษะการคิดเชิงวิศวกรรม<br/>ด้านตัวเลข · มิติสัมพันธ์ · เชิงกล · ฟิสิกส์ · เทคโนโลยี</p>
+    <div class="stats">
+      <div><div class="stat-v">5</div><div class="stat-l">คำถาม</div></div>
+      <div><div class="stat-v">5</div><div class="stat-l">ตัวเลือก/ข้อ</div></div>
+      <div><div class="stat-v">80%</div><div class="stat-l">เป้าหมาย</div></div>
+    </div>
+    <button class="btn btn-primary" onclick="startQuiz()"><span>▶ เริ่มทำแบบทดสอบ</span></button>
+  </div>`;
+}
+
+function renderQuiz(){
+  const q=questions[state.qi];
+  const pct=(state.qi/questions.length)*100;
+  const isLast=state.qi===questions.length-1;
+  let optsHtml=q.opts.map((o,i)=>{
+    let cls='opt';let dis='';
+    if(state.answered){
+      dis='disabled';
+      if(i+1===q.ans) cls+=' correct';
+      else if(state.userAns[state.qi]===i+1&&i+1!==q.ans) cls+=' wrong';
+    }
+    return `<li><button class="${cls}" ${dis} onclick="pick(${i+1})">
+      <span class="opt-num">${i+1}</span>
+      <span class="opt-txt">${o}</span>
+    </button></li>`;
+  }).join('');
+  let resultHtml='';
+  if(state.answered){
+    const ok=state.userAns[state.qi]===q.ans;
+    resultHtml=`<div class="result-ind ${ok?'ok':'no'}">${ok?'✅ ถูกต้อง! ยอดเยี่ยม':'❌ ไม่ถูกต้อง — คำตอบที่ถูกคือ ข้อ '+q.ans}</div>`;
+  }
+  let explHtml='';
+  if(state.answered){
+    explHtml=`<div class="expl"><div class="expl-title">📌 คำอธิบาย</div>${q.expl}</div>`;
+  }
+  return `<div class="card screen">
+    <div class="prog-header">
+      <span class="prog-label">ข้อ ${state.qi+1} / ${questions.length}</span>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+      <span class="score-badge">คะแนน: ${state.score}</span>
+    </div>
+    <div class="cat-tag">${q.cat}</div>
+    <div class="q-text q-enter">${q.q}</div>
+    <ul class="opts">${optsHtml}</ul>
+    ${resultHtml}
+    ${explHtml}
+    <button class="btn btn-next" onclick="next()" ${state.answered?'':'disabled'}>
+      ${isLast?'ดูผลคะแนน 🏁':'ข้อถัดไป →'}
+    </button>
+  </div>`;
+}
+
+function renderResult(){
+  const total=questions.length;
+  const pct=Math.round((state.score/total)*100);
+  const pass=pct>=80;
+  const circ=2*Math.PI*65;
+  const revHtml=state.userAns.map((a,i)=>{
+    const ok=a===questions[i].ans;
+    return `<div class="rev-item ${ok?'ok':'no'}">
+      <span class="dot"></span>
+      <span>ข้อ ${i+1}: ${questions[i].cat.split('(')[0].trim()} — ${ok?'ตอบถูก ✓':'ตอบผิด (เลือก '+a+', ถูกคือ '+questions[i].ans+')'}</span>
+    </div>`;
+  }).join('');
+  return `<div class="card screen">
+    <div class="res-header">
+      <span class="res-icon">${pass?'🏆':'📚'}</span>
+      <div class="res-title">${pass?'ยอดเยี่ยมมาก!':'ยังพัฒนาได้อีก'}</div>
+      <div class="res-sub">คุณตอบถูก ${state.score} จาก ${total} ข้อ (${pct}%)</div>
+    </div>
+    <div class="score-wrap">
+      <div class="score-circle">
+        <svg width="150" height="150" viewBox="0 0 150 150">
+          <defs>
+            <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#7c3aed"/>
+              <stop offset="100%" stop-color="#22d3ee"/>
+            </linearGradient>
+          </defs>
+          <circle class="sc-bg" cx="75" cy="75" r="65"/>
+          <circle class="sc-fill" id="arc" cx="75" cy="75" r="65" style="stroke-dashoffset:${circ}"/>
+        </svg>
+        <div class="score-center">
+          <div class="score-num">${state.score}/${total}</div>
+          <div class="score-pct">${pct}%</div>
+        </div>
+      </div>
+    </div>
+    <div class="congrats ${pass?'pass':'fail'}">
+      ${pass?'🎉 ขอแสดงความยินดี! ผ่านเกณฑ์ 80% เรียบร้อย พร้อมสำหรับ TPAT3 แล้ว!':'💪 ยังไม่ผ่านเกณฑ์ 80% ครั้งนี้ แต่อย่าท้อ! ทบทวนคำอธิบายแล้วลองใหม่นะ'}
+    </div>
+    <div class="review">${revHtml}</div>
+    <button class="btn btn-restart" onclick="restart()"><span>🔄 เริ่มใหม่อีกครั้ง</span></button>
+  </div>`;
+}
+
+function startQuiz(){
+  state={screen:'quiz',qi:0,score:0,answered:false,userAns:[]};render();
+}
+function pick(chosen){
+  if(state.answered)return;
+  state.answered=true;state.userAns[state.qi]=chosen;
+  const ok=chosen===questions[state.qi].ans;
+  if(ok)state.score++;
+  playSound(ok);render();
+}
+function next(){
+  if(!state.answered)return;
+  state.qi++;state.answered=false;
+  if(state.qi<questions.length){state.screen='quiz';render();}
+  else{
+    state.screen='result';render();
+    setTimeout(()=>{
+      const arc=document.getElementById('arc');
+      if(arc){
+        const circ=2*Math.PI*65;
+        const pct=Math.round((state.score/questions.length)*100);
+        arc.style.transition='stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1) .3s';
+        arc.style.strokeDashoffset=circ*(1-pct/100);
+      }
+    },50);
+  }
+}
+function restart(){
+  state={screen:'home',qi:0,score:0,answered:false,userAns:[]};render();
+}
+
+render();
+</script>
+</body>
+</html>
